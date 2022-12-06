@@ -1,8 +1,24 @@
 {
     "name": "magazord-plataforma/aliexpress-sdk",
     "description": "SDK para integração aliexpress na plataforma Magazord",
+    "keywords": [
+        "maga",
+        "magazord",
+        "aliexpress",
+        "ali"
+    ],
     "type": "library",
-    "license": "no have",
+    "licence": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Desenvolvimento Magazord",
+            "email": "webmaster@magazord.com.br"
+        }
+    ],
     "minimum-stability": "stable",
-    "require": {}
+    "require": {},
+    "autoload": {
+        "classmap": ["top/"]
+    },
+    "include-path": ["top/"]
 }
