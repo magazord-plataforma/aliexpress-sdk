@@ -1,0 +1,8 @@
+{
+    "name": "magazord-plataforma/aliexpress-sdk",
+    "description": "SDK para integração aliexpress na plataforma Magazord",
+    "type": "library",
+    "license": "no have",
+    "minimum-stability": "stable",
+    "require": {}
+}
