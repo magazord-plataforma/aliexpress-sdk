@@ -302,10 +302,12 @@ class TopClient
 			if (null !== $respObject)
 			{
 				$respWellFormed = true;
-				foreach ($respObject as $propKey => $propValue)
-				{
-					$respObject = $propValue;
-				}
+				// no "root" temos a classe/tipo do retorno - vamos mater o original 
+				// para tratar o "error_response"
+				// foreach ($respObject as $propKey => $propValue)
+				// {
+				// 	$respObject = $propValue;
+				// }
 			}
 		}
 		else if("xml" == $this->format)
