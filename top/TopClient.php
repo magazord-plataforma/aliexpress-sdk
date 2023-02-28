@@ -22,6 +22,11 @@ class TopClient
 
 	protected $sdkVersion = "top-sdk-php-20180326";
 
+	/**
+	* @var MzLogger
+	*/
+	protected $log;
+
 	public function getAppkey()
 	{
 		return $this->appkey;
@@ -69,6 +74,7 @@ class TopClient
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 		}
 
+		$logString = null;                
 		if (is_array($postFields) && 0 < count($postFields))
 		{
 			$postBodyString = "";
@@ -78,6 +84,7 @@ class TopClient
 				if("@" != substr($v, 0, 1))//判断是不是文件上传
 				{
 					$postBodyString .= "$k=" . urlencode($v) . "&"; 
+					$logString .= '[' . $k . '] => ' . $v . PHP_EOL;
 				}
 				else//文件上传用multipart/form-data，否则用www-form-urlencoded
 				{
@@ -85,6 +92,7 @@ class TopClient
 					if(class_exists('\CURLFile')){
 						$postFields[$k] = new \CURLFile(substr($v, 1));
 					}
+					$logString .= '[' . $k . '] => ' . $v . PHP_EOL;
 				}
 			}
 			unset($k, $v);
@@ -108,6 +116,11 @@ class TopClient
 			}
 		}
 		$reponse = curl_exec($ch);
+
+		// Log
+		$this->getLog()->setUrl($url);                
+		$this->getLog()->setRequestString($logString);                
+		$this->getLog()->setResponseString($reponse);                
 		
 		if (curl_errno($ch))
 		{
@@ -116,6 +129,8 @@ class TopClient
 		else
 		{
 			$httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			$this->getLog()->setHttpCode($httpStatusCode);
+
 			if (200 !== $httpStatusCode)
 			{
 				throw new Exception($reponse,$httpStatusCode);
@@ -181,6 +196,10 @@ class TopClient
 		$reponse = curl_exec($ch);
 		unset($data);
 
+		// Log
+		$this->getLog()->setUrl($url);                
+		$this->getLog()->setResponseString($reponse);                
+
 		if (curl_errno($ch))
 		{
 			throw new Exception(curl_error($ch),0);
@@ -188,6 +207,8 @@ class TopClient
 		else
 		{
 			$httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                        $this->getLog()->setHttpCode($httpStatusCode);
+                        
 			if (200 !== $httpStatusCode)
 			{
 				throw new Exception($reponse,$httpStatusCode);
@@ -376,4 +397,15 @@ class TopClient
     {
 	    return substr($this->sdkVersion,0,11)."-cluster".substr($this->sdkVersion,11);
     }
+    
+	public function getLog()
+	{
+		if (!$this->log) {
+			require_once('MzLogger.php');
+			$this->log = new MzLogger();
+		}
+		return $this->log;
+	}
+
+
 }
